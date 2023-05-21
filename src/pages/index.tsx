@@ -4,6 +4,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import Spinner from "~/components/Spinner";
 
 import { type RouterOutputs, api } from "~/utils/api";
 
@@ -55,7 +56,12 @@ const Home: NextPage = () => {
   const user = useUser();
   const { data, isLoading } = api.posts.getAll.useQuery();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div className="absolute flex h-screen w-screen items-center justify-center">
+        <Spinner />
+      </div>
+    );
   if (!data) return <div>Something went wrong!</div>;
   return (
     <>
