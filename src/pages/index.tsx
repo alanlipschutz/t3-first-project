@@ -34,7 +34,11 @@ const PostViews = ({ post, author }: PostWithUser) => {
         className="rounded-full"
       />
       <div className="flex flex-col gap-2">
-        <h3>@{author?.username}</h3>
+        <div className="flex items-center gap-3 text-gray-400">
+          <h3>@{author?.username}</h3>
+          <span> | </span>
+          <span> 1 hour ago </span>
+        </div>
         <span className="grow">{post.content}</span>
       </div>
     </div>
