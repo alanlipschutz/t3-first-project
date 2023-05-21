@@ -52,17 +52,27 @@ const PostViews = ({ post, author }: PostWithUser) => {
   );
 };
 
-const Home: NextPage = () => {
-  const user = useUser();
+const Feed = () => {
   const { data, isLoading } = api.posts.getAll.useQuery();
-
   if (isLoading)
     return (
-      <div className="absolute flex h-screen w-screen items-center justify-center">
+      <div className="absolute left-0 right-0 flex h-screen w-screen items-center justify-center">
         <Spinner />
       </div>
     );
   if (!data) return <div>Something went wrong!</div>;
+  return (
+    <div className="flex flex-col">
+      {data?.map(({ post, author }) => (
+        <PostViews key={post.id} post={post} author={author} />
+      ))}
+    </div>
+  );
+};
+
+const Home: NextPage = () => {
+  const user = useUser();
+
   return (
     <>
       <Head>
@@ -76,11 +86,7 @@ const Home: NextPage = () => {
             <header className="flex justify-between border-b border-slate-400 p-4">
               <CreatePostWizard />
             </header>
-            <div className="flex flex-col">
-              {data?.map(({ post, author }) => (
-                <PostViews key={post.id} post={post} author={author} />
-              ))}
-            </div>
+            <Feed />
           </div>
         )}
         {!user.isSignedIn && (
