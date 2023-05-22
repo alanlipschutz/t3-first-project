@@ -4,6 +4,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import { useState } from "react";
 import Spinner from "~/components/Spinner";
 
 import { type RouterOutputs, api } from "~/utils/api";
@@ -12,17 +13,21 @@ dayjs.extend(relativeTime);
 
 const CreatePostWizard = () => {
   const { user } = useUser();
-
+  const [input, setInput] = useState("");
+  const { mutate } = api.posts.create.useMutation();
   if (!user) return null;
 
   return (
     <div className="flex w-full items-center justify-start gap-5">
-      <UserButton />
+      <UserButton afterSignOutUrl="http://localhost:3000" />
       <input
         type="text"
         placeholder="type some emoji"
         className="grow rounded-sm border-b-2 border-transparent bg-transparent p-1 outline-none transition duration-300 hover:border-blue-500"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
       />
+      <button onClick={() => mutate({ content: input })}>Post</button>
     </div>
   );
 };
