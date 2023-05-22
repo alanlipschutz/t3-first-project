@@ -5,6 +5,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 import Spinner from "~/components/Spinner";
 
 import { type RouterOutputs, api } from "~/utils/api";
@@ -20,6 +21,15 @@ const CreatePostWizard = () => {
       setInput("");
       void ctx.posts.invalidate();
     },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors?.content;
+      console.log(errorMessage);
+      if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to post. Please, try again later");
+      }
+    },
   });
   if (!user) return null;
 
@@ -31,10 +41,23 @@ const CreatePostWizard = () => {
         placeholder="type some emoji"
         className="grow rounded-sm border-b-2 border-transparent bg-transparent p-1 outline-none transition duration-300 hover:border-blue-500"
         value={input}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            if (input !== "") {
+              mutate({ content: input });
+            }
+          }
+        }}
         onChange={(e) => setInput(e.target.value)}
         disabled={isPosting}
       />
-      <button onClick={() => mutate({ content: input })}>Post</button>
+      {input !== "" && !isPosting && (
+        <button onClick={() => mutate({ content: input })} disabled={isPosting}>
+          Post
+        </button>
+      )}
+      {isPosting && <Spinner size={20} />}
     </div>
   );
 };
