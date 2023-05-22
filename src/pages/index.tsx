@@ -4,6 +4,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import Spinner from "~/components/Spinner";
@@ -75,13 +76,17 @@ const PostViews = ({ post, author }: PostWithUser) => {
       />
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-3">
-          <h3>@{author?.username}</h3>
+          <Link href={`/@${author.username}`}>
+            <h3>@{author?.username}</h3>
+          </Link>
           <span> | </span>
           <span className="text-gray-400">
             {dayjs(post.createdAt).fromNow()}
           </span>
         </div>
-        <span className="grow text-2xl">{post.content}</span>
+        <Link href={`/post/${post.id}`}>
+          <span className="grow text-2xl">{post.content}</span>
+        </Link>
       </div>
     </div>
   );
