@@ -26,6 +26,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   return {
     props: {
       trpcState: helpers.dehydrate(),
+      replacedUserId,
     },
     revalidate: 1,
   };
@@ -38,11 +39,12 @@ export const getStaticPaths: GetStaticPaths = () => {
   };
 };
 
-const ProfilePage: NextPage = () => {
+const ProfilePage: NextPage<{ replacedUserId: string }> = ({
+  replacedUserId,
+}) => {
   const { data, isLoading } = api.profile.getUserByUsername.useQuery({
-    userId: "user_2PxkATTPS6BGJyfcWXrYDXWbyPr",
+    userId: replacedUserId,
   });
-  console.log(data);
 
   if (isLoading)
     return (
@@ -64,7 +66,7 @@ const ProfilePage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex h-screen justify-center">
-        <div>Profile view</div>
+        <div>{data.username}</div>
       </main>
     </>
   );
