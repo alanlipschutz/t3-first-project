@@ -10,7 +10,6 @@ export const profileRouter = createTRPCRouter({
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
       const user = await clerkClient.users.getUser(input.userId);
-      console.log(input.userId);
       if (!user) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "User not found" });
       }

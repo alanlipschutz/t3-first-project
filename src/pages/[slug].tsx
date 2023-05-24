@@ -1,14 +1,42 @@
-import { SignUp, UserButton, useUser } from "@clerk/nextjs";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { type NextPage } from "next";
+import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
-import { useState } from "react";
-import { toast } from "react-hot-toast";
 import Spinner from "~/components/Spinner";
 
-import { type RouterOutputs, api } from "~/utils/api";
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { prisma } from "~/server/db";
+import superjson from "superjson";
+import { appRouter } from "~/server/api/root";
+
+import { api } from "~/utils/api";
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    ctx: { prisma, userId: null },
+    transformer: superjson, // optional - adds superjson serialization
+  });
+
+  const userId = context.params?.slug;
+
+  if (typeof userId !== "string") throw new Error("no slug");
+  const replacedUserId = userId.replace("@", "");
+
+  await helpers.profile.getUserByUsername.prefetch({ userId: replacedUserId });
+
+  return {
+    props: {
+      trpcState: helpers.dehydrate(),
+    },
+    revalidate: 1,
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = () => {
+  return {
+    paths: [],
+    fallback: "blocking",
+  };
+};
 
 const ProfilePage: NextPage = () => {
   const { data, isLoading } = api.profile.getUserByUsername.useQuery({
