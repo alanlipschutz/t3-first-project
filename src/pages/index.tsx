@@ -3,15 +3,13 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { type NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import Layout from "~/components/Layout";
 import { PostViews } from "~/components/PostView";
 import Spinner from "~/components/Spinner";
 
-import { type RouterOutputs, api } from "~/utils/api";
+import { api } from "~/utils/api";
 
 dayjs.extend(relativeTime);
 
