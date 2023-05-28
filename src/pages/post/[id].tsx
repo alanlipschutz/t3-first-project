@@ -3,35 +3,8 @@ import Head from "next/head";
 import Spinner from "~/components/Spinner";
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout";
-import Image from "next/image";
 import { PostViews } from "~/components/PostView";
 import { generateSSGHelper } from "~/server/helpers/ssgHelpers";
-
-const ProfileFeed = (props: { userId: string }) => {
-  const { data, isLoading } = api.posts.getPostByUserId.useQuery({
-    userId: props.userId,
-  });
-
-  if (isLoading)
-    return (
-      <div className="absolute left-0 right-0 flex h-screen w-screen items-center justify-center">
-        <Spinner />
-      </div>
-    );
-  if (!data || data.length === 0) return <div>User has not posted</div>;
-
-  return (
-    <div className="flex flex-col">
-      {data.map((fullpost) => (
-        <PostViews
-          author={fullpost.author}
-          post={fullpost.post}
-          key={fullpost.post.id}
-        />
-      ))}
-    </div>
-  );
-};
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const helpers = generateSSGHelper();
