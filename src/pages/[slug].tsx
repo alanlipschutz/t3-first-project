@@ -10,6 +10,33 @@ import { appRouter } from "~/server/api/root";
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout";
 import Image from "next/image";
+import { PostViews } from "~/components/PostView";
+
+const ProfileFeed = (props: { userId: string }) => {
+  const { data, isLoading } = api.posts.getPostByUserId.useQuery({
+    userId: props.userId,
+  });
+
+  if (isLoading)
+    return (
+      <div className="absolute left-0 right-0 flex h-screen w-screen items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  if (!data || data.length === 0) return <div>User has not posted</div>;
+
+  return (
+    <div className="flex flex-col">
+      {data.map((fullpost) => (
+        <PostViews
+          author={fullpost.author}
+          post={fullpost.post}
+          key={fullpost.post.id}
+        />
+      ))}
+    </div>
+  );
+};
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const helpers = createServerSideHelpers({
@@ -65,8 +92,8 @@ const ProfilePage: NextPage<{ replacedUserId: string }> = ({
       <Head>
         <title>{data.username}</title>
       </Head>
-      <Layout height="screen">
-        <div className="relative h-48 bg-slate-600">
+      <Layout height="full">
+        <div className="relative h-36 bg-slate-600">
           <Image
             src={data.profilePicture}
             alt="profile-picture"
@@ -74,10 +101,11 @@ const ProfilePage: NextPage<{ replacedUserId: string }> = ({
             height={125}
             className="absolute bottom-1 left-0 -mb-[72px] ml-4 rounded-full border-4 border-black"
           />
-          <div>{data.username}</div>
         </div>
         <div className="h-[72px]"> </div>
-        <div>{data.username}</div>
+        <div className="p-4 text-2xl font-bold">@{data.username}</div>
+        <div className="w-full border-b border-slate-400"></div>
+        <ProfileFeed userId={data.id} />
       </Layout>
     </>
   );
