@@ -36,7 +36,7 @@ const CreatePostWizard = () => {
 
   return (
     <div className="flex w-full items-center justify-start gap-5">
-      <UserButton afterSignOutUrl="http://localhost:3000" />
+      <UserButton afterSignOutUrl="/" />
       <input
         type="text"
         placeholder="type some emoji"
